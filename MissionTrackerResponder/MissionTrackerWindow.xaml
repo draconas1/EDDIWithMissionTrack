@@ -1,0 +1,51 @@
+﻿<Window x:Class="EddiMissionTrackerResponder.MissionTrackerWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EddiMissionTrackerResponder"
+             mc:Ignorable="d" 
+             Title="Mission Tracker"
+             d:DesignHeight="600" d:DesignWidth="1600">
+    <Window.Resources>
+        <local:NotNullToTrueConverter x:Key="notNullConverter" />
+    </Window.Resources>
+    <StackPanel>
+        <Grid Margin="10" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="200" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Text="Active Missions" VerticalAlignment="Top"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Text="Cargo Requirements" VerticalAlignment="Top"/>
+            <DataGrid Margin="10" x:Name="MissionGrid" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Missions, Mode=OneWay}" SelectedItem="{Binding SelectedMission}" 
+                CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserResizeRows="False" CanUserSortColumns="True" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding name, Mode=OneWay}"/>
+                    <DataGridTextColumn Header="Commodity" Binding="{Binding commodity, Mode=OneWay}"/>
+                    <DataGridTextColumn Header="Amount" Binding="{Binding amount, Mode=OneWay}"/>
+                    <DataGridTextColumn Header="System" Binding="{Binding destinationsystem, Mode=OneWay}"/>
+                    <DataGridTextColumn Header="Station" Binding="{Binding destinationstation, Mode=OneWay}"/>
+                    <DataGridTextColumn Header="Target" Binding="{Binding target, Mode=OneWay}"/>
+                    <DataGridTextColumn Header="Target Type" Binding="{Binding targettype, Mode=OneWay}"/>
+                    <DataGridTextColumn Header="Passenger Type" Binding="{Binding passengertype, Mode=OneWay}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <DataGrid Margin="10" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding MissionRequirements, Mode=OneWay}" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
+                    <DataGridTextColumn Header="Required" Binding="{Binding RequiredQuantity, Mode=OneWay}"/>
+                    <DataGridTextColumn Header="Cargo" Binding="{Binding Quantity, Mode=OneWay}"/>
+                    <DataGridTextColumn Header="Available?" Binding="{Binding AtCurrentStation, Mode=OneWay}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Button Content="Delete CurrentMission" Command="{Binding DeleteSelectedMission}"/>
+        <Button Content="Clear Store"  Click="clearStore"/>
+    </StackPanel>
+</Window >
