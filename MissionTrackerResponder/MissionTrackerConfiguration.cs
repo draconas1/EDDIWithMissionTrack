@@ -33,7 +33,7 @@ namespace EddiMissionTrackerResponder
         {
             if (filename == null)
             {
-                filename = Constants.DATA_DIR + @"\edsm.json";
+                filename = Constants.DATA_DIR + @"\missionTracker.json";
             }
 
             MissionTrackerConfiguration credentials = new MissionTrackerConfiguration();

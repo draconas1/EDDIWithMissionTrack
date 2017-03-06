@@ -40,10 +40,10 @@ namespace EddiMissionTrackerResponder
             var request = new RestRequest("api-v1/cube-systems");
             request.AddParameter("apiKey", mStarMapConfig.apiKey);
             request.AddParameter("commanderName", mStarMapConfig.commanderName);
-
-            var encodedName = WebUtility.UrlEncode(currentSystem.name);
-            //request.AddParameter("systemName", encodedName);
-
+            if (string.IsNullOrEmpty(currentSystem.name))
+            {
+                return;
+            }
             request.AddParameter("x", getCoOrd(currentSystem.x));
             request.AddParameter("y", getCoOrd(currentSystem.y));
             request.AddParameter("z", getCoOrd(currentSystem.z));
