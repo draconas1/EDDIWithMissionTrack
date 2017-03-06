@@ -7,7 +7,37 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
     <StackPanel Background="#FFE5E5E5">
-        <Button Content="Load Journal" Click="testButtonClick"/>
-        <Button Content="Show Mission Tracker"  Click="clearStore"/>
+        <Button Content="Show Mission Tracker"  Click="showMainWindow" Height="50"/>
+       
+        <StackPanel Margin="10">
+            <TextBlock Text="Configuration" FontSize="18"/>
+            <TextBlock Text="Problematic System Finder"/>
+            <StackPanel Margin="10,0,10,10">
+                <Button Content="Load EDDB System JSONL Data"  Click="loadSystemData" HorizontalAlignment="Left"/>
+                <Button Content="Load EDDB Station JSONL Data"  Click="loadStationData" HorizontalAlignment="Left"/>
+                <StackPanel Margin="10">
+                    <TextBlock Text="Problematic System Finder Variables"  Margin="0,0,0,5"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Max Distance From Current System (LY)" Grid.Column="0" Grid.Row="0" Margin="0,0,10,0"/>
+                        <TextBlock Text="Min Distance From Star to be problematic(LS)" Grid.Column="0" Grid.Row="1" Margin="0,0,10,0"/>
+                        <TextBox Name="MaxStarDistanceBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Width="100" TextChanged="configChanged" PreviewTextInput="NumberValidationTextBox"/>
+                        <TextBox Name="MinStationDistance" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Width="100" TextChanged="configChanged" PreviewTextInput="NumberValidationTextBox"/>
+                    </Grid>
+                </StackPanel>
+                <Button Content="Clear Problematic Station Data" HorizontalAlignment="Left" Click="clearProblemStationClick"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Margin="10">
+            <TextBlock Text="Testing" FontSize="18"/>
+            <Button Content="Load Journal File"  Click="testButtonClick" HorizontalAlignment="Left"/>
+        </StackPanel>
     </StackPanel>
 </UserControl>

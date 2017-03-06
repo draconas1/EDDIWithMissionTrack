@@ -12,19 +12,30 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace EddiMissionTrackerResponder
 {
     public class MissionTrackerViewModel : INotifyPropertyChanged
     {
+        private static object sMissionsLock = new object();
+        private static object sCargoLock = new object();
+        private static object sMissionCargoLock = new object();
+        private static object sProblemStationsLock = new object();
+        
+
         public ObservableCollection<MissionAcceptedEvent> Missions { get; private set; }
 
         public ObservableCollection<Cargo> Cargo { get; private set; }
 
+        public ObservableCollection<ProblemStation> ProblemStations { get; private set; }
+
         public ObservableCollection<MissionCargo> MissionRequirements { get; private set; }
 
         public RelayCommand DeleteSelectedMission { get; private set; }
+
+        public RelayCommand CalculateProblematicStations { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -39,6 +50,13 @@ namespace EddiMissionTrackerResponder
             Missions = new ObservableCollection<MissionAcceptedEvent>();
             Cargo = new ObservableCollection<Cargo>();
             MissionRequirements = new ObservableCollection<MissionCargo>();
+            ProblemStations = new ObservableCollection<ProblemStation>();
+
+            BindingOperations.EnableCollectionSynchronization(Missions, sMissionsLock);
+            BindingOperations.EnableCollectionSynchronization(Cargo, sCargoLock);
+            BindingOperations.EnableCollectionSynchronization(MissionRequirements, sMissionCargoLock);
+            BindingOperations.EnableCollectionSynchronization(ProblemStations, sProblemStationsLock);
+
             Missions.CollectionChanged += new NotifyCollectionChangedEventHandler(calculateMissionRequirements);
             mRepository = MissionSqlLiteRepository.Instance;
             foreach(var cargo in mRepository.loadAllCargo().AsEnumerable())
@@ -54,6 +72,7 @@ namespace EddiMissionTrackerResponder
             Missions.CollectionChanged += mDatabaseHandler;
 
             DeleteSelectedMission = new RelayCommand(deleteMission, () => SelectedMission != null);
+            CalculateProblematicStations = new RelayCommand(() => new ProblematicDestinationCalculator(this).calculate());
         }
 
 
@@ -108,6 +127,7 @@ namespace EddiMissionTrackerResponder
             var cargoLookup = Cargo.ToDictionary(cargo => cargo.Name, cargo => cargo.Quantity);
             MissionRequirements.Clear();
             var stuff = Missions.Where(mission => mission.amount.HasValue)
+                .Where(mission => !mission.name.Contains("Deliver"))
                 .GroupBy(mission => mission.commodity)
                 .Select(group => new
                 {
@@ -274,6 +294,20 @@ namespace EddiMissionTrackerResponder
 
         public MissionCargo(string name, int quantity) : base(name, quantity)
         {
+        }
+    }
+
+    public class ProblemStation
+    {
+        public string Name { get; private set; }
+        public string SystemName { get; private set; }
+        public int Distance { get; private set; }
+
+        public ProblemStation(string name, string systemName, int distance)
+        {
+            Name = name;
+            SystemName = systemName;
+            Distance = distance;
         }
     }
 }

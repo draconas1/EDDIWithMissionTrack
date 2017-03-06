@@ -56,12 +56,18 @@ namespace EddiMissionTrackerResponder
             if (theEvent is MissionAcceptedEvent)
             {
                 MissionAcceptedEvent newMissionEvent = (MissionAcceptedEvent)theEvent;
-                mViewModel.Missions.Add(newMissionEvent);
+                if (newMissionEvent.missionid.HasValue)
+                {
+                    mViewModel.addMission(newMissionEvent);
+                }
             }
             else if (theEvent is MissionCompletedEvent)
             {
                 MissionCompletedEvent missionEndedEvent = (MissionCompletedEvent)theEvent;
-                mViewModel.removeMission(missionEndedEvent.missionid);
+                if (missionEndedEvent.missionid.HasValue)
+                {
+                    mViewModel.removeMission(missionEndedEvent.missionid);
+                }
             }
             else if (theEvent is MissionAbandonedEvent)
             {
@@ -94,18 +100,16 @@ namespace EddiMissionTrackerResponder
                 var commodityEvent = (CommodityEjectedEvent)theEvent;
                 mViewModel.removeCargo(commodityEvent.commodity, commodityEvent.amount);
             }
-            else if (theEvent is DockedEvent)
+            else if (theEvent is MarketInformationUpdatedEvent)
             {
-                var dockedEvent = (DockedEvent)theEvent;
+                var dockedEvent = (MarketInformationUpdatedEvent)theEvent;
 
                 foreach(var mr in mViewModel.MissionRequirements)
                 {
                     mr.AtCurrentStation = null;
                 }
 
-                Thread updateThread = new Thread(() => updateStationInfo(dockedEvent));
-                updateThread.IsBackground = true;
-                updateThread.Start();
+                updateStationInfo(dockedEvent);
             }
         }
    
@@ -128,55 +132,22 @@ namespace EddiMissionTrackerResponder
         }
 
 
-        private void updateStationInfo(DockedEvent dockedEvent)
+        private void updateStationInfo(MarketInformationUpdatedEvent dockedEvent)
         {
-            if (CompanionAppService.Instance == null && CompanionAppService.Instance.CurrentState != CompanionAppService.State.READY)
+            if (EDDI.Instance.CurrentStation.commodities != null)
             {
-                Logging.Debug("Cannot refresh profile when companion app service is not active");
-                return;
-            }
+                var lookup = mViewModel.MissionRequirements.ToDictionary(x => x.Name, x => x);
 
-            int maxTries = 16;
-
-            while (mRunning && maxTries > 0)
-            {
-                try
+                foreach (Commodity commodity in EDDI.Instance.CurrentStation.commodities)
                 {
-                    if (EDDI.Instance.CurrentStation.commodities != null)
+                    if (lookup.ContainsKey(commodity.name))
                     {
-                        var lookup = mViewModel.MissionRequirements.ToDictionary(x => x.Name, x => x);
-
-                        foreach (Commodity commodity in EDDI.Instance.CurrentStation.commodities)
+                        if (commodity.buyprice.HasValue && commodity.buyprice> 0 && commodity.stock.HasValue && commodity.stock > 0)
                         {
-                            if (lookup.ContainsKey(commodity.name))
-                            {
-                                if (commodity.sellprice.HasValue && commodity.stock.HasValue)
-                                {
-                                    lookup[commodity.name].AtCurrentStation = true;
-                                }
-                            }
+                            lookup[commodity.name].AtCurrentStation = true;
                         }
-                        break;
-                    }
-                    else
-                    { 
-                        // profile hasn't updated yet.  Wait.  shorter wait than profile as to be useful i need to get info to the user quickly.
-                        Thread.Sleep(5000);
                     }
                 }
-                catch (Exception ex)
-                {
-                    Logging.Error("Exception getting updated profile info", ex);
-                }
-                finally
-                {
-                    maxTries--;
-                }
-            }
-
-            if (maxTries == 0)
-            {
-                Logging.Info("Maximum attempts reached; giving up on updating profile");
             }
         }
     }

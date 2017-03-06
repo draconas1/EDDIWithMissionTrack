@@ -10,42 +10,57 @@
     <Window.Resources>
         <local:NotNullToTrueConverter x:Key="notNullConverter" />
     </Window.Resources>
-    <StackPanel>
-        <Grid Margin="10" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="200" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            
-            <TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Text="Active Missions" VerticalAlignment="Top"/>
-            <TextBlock Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Text="Cargo Requirements" VerticalAlignment="Top"/>
-            <DataGrid Margin="10" x:Name="MissionGrid" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Missions, Mode=OneWay}" SelectedItem="{Binding SelectedMission}" 
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Top">
+            <Grid Margin="10" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="350" />
+                    <ColumnDefinition Width="150" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Text="Active Missions" VerticalAlignment="Top"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Text="Cargo Requirements" VerticalAlignment="Top"/>
+                <DataGrid Margin="10" x:Name="MissionGrid" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Missions, Mode=OneWay}" SelectedItem="{Binding SelectedMission}" 
                 CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserResizeRows="False" CanUserSortColumns="True" AutoGenerateColumns="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding name, Mode=OneWay}"/>
-                    <DataGridTextColumn Header="Commodity" Binding="{Binding commodity, Mode=OneWay}"/>
-                    <DataGridTextColumn Header="Amount" Binding="{Binding amount, Mode=OneWay}"/>
-                    <DataGridTextColumn Header="System" Binding="{Binding destinationsystem, Mode=OneWay}"/>
-                    <DataGridTextColumn Header="Station" Binding="{Binding destinationstation, Mode=OneWay}"/>
-                    <DataGridTextColumn Header="Target" Binding="{Binding target, Mode=OneWay}"/>
-                    <DataGridTextColumn Header="Target Type" Binding="{Binding targettype, Mode=OneWay}"/>
-                    <DataGridTextColumn Header="Passenger Type" Binding="{Binding passengertype, Mode=OneWay}"/>
-                </DataGrid.Columns>
-            </DataGrid>
-            <DataGrid Margin="10" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding MissionRequirements, Mode=OneWay}" AutoGenerateColumns="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
-                    <DataGridTextColumn Header="Required" Binding="{Binding RequiredQuantity, Mode=OneWay}"/>
-                    <DataGridTextColumn Header="Cargo" Binding="{Binding Quantity, Mode=OneWay}"/>
-                    <DataGridTextColumn Header="Available?" Binding="{Binding AtCurrentStation, Mode=OneWay}"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
-        <Button Content="Delete CurrentMission" Command="{Binding DeleteSelectedMission}"/>
-        <Button Content="Clear Store"  Click="clearStore"/>
-    </StackPanel>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding name, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Commodity" Binding="{Binding commodity, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Amount" Binding="{Binding amount, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="System" Binding="{Binding destinationsystem, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Station" Binding="{Binding destinationstation, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Target" Binding="{Binding target, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Target Type" Binding="{Binding targettype, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Passenger Type" Binding="{Binding passengertype, Mode=OneWay}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <DataGrid Margin="10" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding MissionRequirements, Mode=OneWay}" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Required" Binding="{Binding RequiredQuantity, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Cargo" Binding="{Binding Quantity, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Available?" Binding="{Binding AtCurrentStation, Mode=OneWay}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Grid.Column="2" Grid.Row="1">
+                    <Button Content="Delete CurrentMission" Command="{Binding DeleteSelectedMission}"/>
+                    <Button Content="Clear Store"  Click="clearStore"/>
+                </StackPanel>
+            </Grid>
+            <Button Content="Find Problematic Stations" Command="{Binding CalculateProblematicStations}" HorizontalAlignment="Left"/>
+        </StackPanel>
+        <DataGrid Margin="10" x:Name="ProblemStationsGrid" ItemsSource="{Binding ProblemStations, Mode=OneWay}" 
+                CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserResizeRows="False" CanUserSortColumns="True" AutoGenerateColumns="False" 
+                  VerticalScrollBarVisibility="Visible" HorizontalAlignment="Left" DockPanel.Dock="Bottom">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="System Name" Binding="{Binding SystemName, Mode=OneWay}"/>
+                <DataGridTextColumn Header="Station" Binding="{Binding Name, Mode=OneWay}"/>
+                <DataGridTextColumn Header="Distance" Binding="{Binding Distance, Mode=OneWay}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
 </Window >

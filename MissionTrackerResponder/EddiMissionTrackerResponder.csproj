@@ -30,6 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\..\..\..\Documents\Visual Studio 2015\Projects\MvvmLight1\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -37,6 +45,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -64,6 +73,9 @@
     </Compile>
     <Compile Include="Converters.cs" />
     <Compile Include="IMissionRepository.cs" />
+    <Compile Include="MissionTrackerConfiguration.cs" />
+    <Compile Include="ProblematicDestinationCalculator.cs" />
+    <Compile Include="SystemInfoSqlLiteRepository.cs" />
     <Compile Include="MissionSqlLiteRepository.cs" />
     <Compile Include="MissionTrackerResponder.cs" />
     <Compile Include="MissionTrackerViewModel.cs" />
