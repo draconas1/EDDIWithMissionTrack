@@ -1,56 +1,32 @@
-# EDDI: The Elite Dangerous Data Interface
+# EDDI with Mission Tracker: The Elite Dangerous Data Interface
 
-Current version: 2.2.0
+Current version: 1.1 (EDDI 2.2.0)
 
-EDDI is a companion application for Elite: Dangerous, providing responses to events that occur in-game using data from the game as well as various third-party tools.
+For how it works, see the main EDDI page https://github.com/cmdrmcdonald/EliteDangerousDataProvider
 
-EDDI reads data from a variety of sources to provide players with additional information whilst in-game, and also with events that can trigger such things as spoken responses or VoiceAttack actions.  The basic flow of EDDI is shown below:
 
-![](images/Architecture.png)
+This provides a new tab (mission tracker) that can spawn a new window, designed for playing Elite with multiple monitors.  Basically I got tried of trying to mission manage using the in game UI once I ahd more than 1 or 2 missions on the go.
 
-Monitors are pieces of code that check for information, for example a new Galnet article being published or an entry to Elite's journal.  Monitors pass information on the event to EDDI.
+# Functions
 
-EDDI takes events and carries out operations based on them.  For example, if the event says that the player has changed system then EDDI will fetch updated system information from EDDB.  Once it has gathered all of the required information it will notify each responder of the event.
+## Mission Tracking
 
-Responders take the events, along with any information that has been gathered by EDDI, and carry out actions.  For example the EDSM responder sends details of any jumps that the player makes to EDSM so that they have a permanent record of their flight logs, the speech responder provides a spoken response to events, the VoiceAttack responder provides variables to VoiceAttack scripts and runs specific scripts when events occur, etc.
+This is the main function.  The top grid listens to the various mission events and keeps track, allowing you to see what missions you have accepted at a glace and sort them.  
 
-Monitors and responders can be configured from the EDDI UI, and can be individually enabled or disabled as required.
+The grid to the right keeps a track of what cargo is required for Collect X missions and what is in your cargo bay.  It attempts to flag when the required cargo is available at a station you have arrived at, but that functionality is a bit hit and miss.
 
-## Installing and Configuring EDDI
+Missions are added and removed automatically, but can be manually deleted using the relevant button.
 
-EDDI can be installed standalone or as a VoiceAttack plugin.
+### PROBLEM
 
-Download the EDDI installer from [http://www.mcdee.net/elite/EDDI.exe](http://www.mcdee.net/elite/EDDI.exe).  By default it will install in C:\Program Files (x86)\VoiceAttack\Apps\EDDI, which is fine regardless of if you have VoiceAttack or not, but of course you can change it if you wish (although note that if the installation is not in a subdirectory of your VoiceAttack's Apps directory then it will not be able to be used as a VoiceAttack plugin).
+There is no journal event for "mission has changed", so if your mission is updated halfway through (like a new station) the tracker has no way to know.
 
-Alternatively you can compile EDDI from the sources at [https://github.com/cmdrmcdonald/EliteDangerousDataProvider](https://github.com/cmdrmcdonald/EliteDangerousDataProvider).
+## Listing Distant Stations
 
-When you start EDDI it will bring up a window with a number of tabs.  Each tab explains its function and how to configure it, so you will be best served to read each tab and set it up according to your liking.
+I don't like taking missions to far away stations - things more than 1500ls from the jump point.  The time spent cruising almost always outweighs the benefit of the mission.
 
-## Using EDDI with VoiceAttack
+Unforuntately there is no way for an external program like the tracker to know about a mission before you accept it.  So to counter this I have the problematic station finder, this lists ALL stations within a set LY distance that are more than a set distance away from the parent star. 
 
-Initial EDDI integration with VoiceAttack is automatic, but there is a lot that you can do to integrate EDDI with your own VoiceAttack scripts.  Full details of what you can do with EDDI and VoiceAttack are on the [VoiceAttack EDDI page](https://github.com/cmdrmcdonald/EliteDangerousDataProvider/blob/master/VoiceAttack.md#using-eddi-with-voiceattack).
+This list is manually populated as it takes a few seconds and locks up the UI whilst doing so.
 
-## Upgrading EDDI
-
-If you are upgrading from EDDI 1 EDDI it is recommended that you uninstall your existing version of EDDI and remove your %APPDATA%\EDDI directory prior to upgrading to the new one.  This ensures that there is a clean installation and reduces the chances of problems occurring.
-
-If you used EDDI 1 with VoiceAttack then please follow the instructions at [https://github.com/cmdrmcdonald/EliteDangerousDataProvider/blob/master/VoiceAttack.md#upgrading-from-eddi-1x](https://github.com/cmdrmcdonald/EliteDangerousDataProvider/blob/master/VoiceAttack.md#upgrading-from-eddi-1x).
-
-If you are upgrading from another version of EDDI 2 the installer will take care of changes so you just need to run it.
-
-## EDDI Voices
-
-EDDI uses the standard Windows TTS (text-to-speech) voices.  To be eligible for use in EDDI the voice needs to support phonetic speech.  Apart from Windows' default voices there are commercial voices available from IVONA and Cereproc, amongst others, that can be used.  The voice needs to be visible to Windows' TTS system to be made available to EDDI: this usually takes place when you install the voice.  If you cannot see a voice in EDDI then check the Windows TTS settings.
-
-# Troubleshooting
-
-If you are experiencing problems with EDDI then your first port of call should be the [troubleshooting page](https://github.com/cmdrmcdonald/EliteDangerousDataProvider/blob/master/TROUBLESHOOTING.md#troubleshooting).  If this does not fix your problem then please check the Known issues below:
-
-  * EDDI relies on the Elite: Dangerous companion app API for a lot of its information.  Sometimes EDDI loses connection to the API and needs to re-authenticate.  If you think that this is a problem you can re-run the 'EDDI.exe' and if the connection is bad it will ask for re-authentication
-  * EDDI is unable to know for sure if you have provided the correct path to the Logs directory.  The only way of knowing this for sure is to jump and see if EDDI tells you about your destination when you make a jump
-
-If you have an issue with EDDI then please report it at https://github.com/cmdrmcdonald/EliteDangerousDataProvider/issues  If you have encountered a problem then please provide the output of the error report (shift-control-alt-e) to aid in fixing the issue.
-
-# Uninstalling EDDI
-
-If you want to uninstall EDDI then you can do so through the Windows control panel.  Any data that EDDI creates is stored in the %APPDATA%\EDDI directory, and this can also be removed on uninstall.
+For this to work you need to have populated the system and station database from EDDB using the EDDB JSONL system and station data.  You also need to have signed up for the Elite Dangerous Star Map service and configured the EDSM plugin wiht your name and API Key.
